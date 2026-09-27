@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Request a quote — American Courier Express</title>
+  <meta name="description" content="Send a pickup, a drop, and a window to the American Courier Express desk. For a shipment that is ready now, call 813-555-0199.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body class="has-callbar">
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="mast">
+    <div class="wrap mast-top">
+      <p>ACE · Tampa Bay</p>
+      <p>Weekdays 9–5 · Weekends by arrangement</p>
+    </div>
+    <div class="wrap mast-main">
+      <a class="wordmark" href="index.html">American<br>Courier Express</a>
+      <nav class="nav" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="about.html">About</a>
+        <a href="faq.html">FAQ</a>
+        <a href="notes.html">Notes</a>
+        <a href="track.html">Track</a>
+        <a href="quote.html" aria-current="page">Quote</a>
+      </nav>
+      <div class="mast-call">
+        <a class="login" href="login.html">Login</a>
+        <a class="mast-phone" href="tel:8135550199">813-555-0199</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="content">
+    <div class="wrap">
+      <header class="page-intro">
+        <h1>Tell dispatch the pickup, the drop, and the window.</h1>
+        <p class="dek">If the shipment is ready now, call <a href="tel:8135550199">813-555-0199</a>. This form stays on this desk and issues a run number you can track.</p>
+      </header>
+
+      <div class="quote-grid">
+        <form class="quote" id="quote-form" action="track.html" method="get">
+          <div class="form-grid">
+            <div class="field">
+              <label for="name">Name</label>
+              <input id="name" name="Name" type="text" autocomplete="name" required>
+            </div>
+            <div class="field">
+              <label for="phone">Phone</label>
+              <input id="phone" name="Phone" type="tel" inputmode="tel" autocomplete="tel" required>
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="Email" type="email" autocomplete="email" required>
+            </div>
+            <div class="field">
+              <label for="company">Company <span class="hint">if this is a firm account</span></label>
+              <input id="company" name="Company" type="text" autocomplete="organization">
+            </div>
+            <div class="field span-2">
+              <label for="pickup">Pickup</label>
+              <textarea id="pickup" name="Pickup" rows="2" autocomplete="street-address" required></textarea>
+            </div>
+            <div class="field span-2">
+              <label for="drop">Delivery</label>
+              <textarea id="drop" name="Delivery" rows="2" autocomplete="street-address" required></textarea>
+            </div>
+            <div class="field">
+              <label for="window">Window</label>
+              <select id="window" name="Window" required>
+                <option value="">Choose a window</option>
+                <option>Rush — about 90 minutes</option>
+                <option>Express — about 3 hours</option>
+                <option>Same day — order by noon, due by 5:00 pm</option>
+                <option>Next day — order by 4:00 pm, due by noon</option>
+                <option>Standing route</option>
+                <option>Tallahassee corporate filing</option>
+                <option>Not sure — desk should advise</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="ready">Ready at <span class="hint">a clock time, or “now”</span></label>
+              <input id="ready" name="Ready at" type="text" required>
+            </div>
+            <div class="field span-2">
+              <label for="load">What it is <span class="hint">pieces, weight, and anything the driver should know</span></label>
+              <textarea id="load" name="Load" rows="3" required></textarea>
+            </div>
+            <div class="field span-2">
+              <label for="notes">Notes <span class="hint">court and deadline, lab handling, after-hours</span></label>
+              <textarea id="notes" name="Notes" rows="3"></textarea>
+            </div>
+          </div>
+          <p class="form-actions">
+            <button class="button" type="submit">Book this with the desk</button>
+            <span class="form-note">You get a run number on this page. An account is optional. Use the same email later if you want the run listed there.</span>
+          </p>
+        </form>
+        <div id="quote-result" class="ticket" hidden></div>
+
+        <aside class="desk" aria-label="Contact the desk">
+          <p class="desk-kicker">Faster than the form</p>
+          <dl>
+            <div>
+              <dt>Phone</dt>
+              <dd><a href="tel:8135550199">813-555-0199</a></dd>
+            </div>
+            <div>
+              <dt>Email</dt>
+              <dd><a href="mailto:desk@americancourier.com">desk@americancourier.com</a></dd>
+            </div>
+          </dl>
+          <p class="desk-note">Have both addresses, the window, and the weight. Price is quoted from those, plus the distance and the area.</p>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap foot-grid">
+      <div>
+        <a class="foot-brand" href="index.html">American<br>Courier Express</a>
+        <p>LLC · Tampa Bay and Lakeland</p>
+      </div>
+      <div>
+        <p class="foot-title">Desks</p>
+        <ul>
+          <li>3902 Henderson Blvd #208, Tampa, FL 33629</li>
+          <li>9340 N 56th St #222A, Tampa, FL 33617</li>
+          <li>601 N Ashley Dr #1100, Tampa, FL 33602</li>
+          <li>4525 Fairway Oaks Dr, Mulberry, FL 33860</li>
+        </ul>
+      </div>
+      <div>
+        <p class="foot-title">Contact</p>
+        <ul>
+          <li><a href="tel:8135550199">813-555-0199</a></li>
+          <li><a href="mailto:desk@americancourier.com">desk@americancourier.com</a></li>
+        </ul>
+      </div>
+      <nav aria-label="Footer">
+        <p class="foot-title">Pages</p>
+        <ul>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="notes.html">Notes</a></li>
+          <li><a href="track.html">Track</a></li>
+          <li><a href="quote.html">Quote</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="wrap foot-base">
+      <p>© 2026 American Courier Express LLC</p>
+    </div>
+  </footer>
+
+  <div class="callbar">
+    <a href="tel:8135550199">813-555-0199</a>
+    <a href="mailto:desk@americancourier.com">desk@americancourier.com</a>
+  </div>
+  <script src="js/desk.js"></script>
+</body>
+</html>
