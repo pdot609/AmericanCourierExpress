@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Request a quote — American Courier Express</title>
-  <meta name="description" content="Send a pickup, a drop, and a window to the American Courier Express desk. For a shipment that is ready now, call 813-555-0199.">
+  <meta name="description" content="Send a pickup, a drop, and a window to the American Courier Express desk. For a shipment that is ready now, call +1 612-649-9537.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
@@ -30,7 +30,7 @@
       </nav>
       <div class="mast-call">
         <a class="login" href="login.html">Login</a>
-        <a class="mast-phone" href="tel:8135550199">813-555-0199</a>
+        <a class="mast-phone" href="tel:+16126499537">+1 612-649-9537</a>
       </div>
     </div>
   </header>
@@ -39,11 +39,11 @@
     <div class="wrap">
       <header class="page-intro">
         <h1>Tell dispatch the pickup, the drop, and the window.</h1>
-        <p class="dek">If the shipment is ready now, call <a href="tel:8135550199">813-555-0199</a>. This form stays on this desk and issues a run number you can track.</p>
+        <p class="dek">If the shipment is ready now, call <a href="tel:+16126499537">+1 612-649-9537</a>. Booking this emails americancourierexpress@my.com and you, and issues a run number you can track.</p>
       </header>
 
       <div class="quote-grid">
-        <form class="quote" id="quote-form" action="track.html" method="get">
+        <form class="quote" id="quote-form" action="https://formsubmit.co/americancourierexpress@my.com" method="post">
           <div class="form-grid">
             <div class="field">
               <label for="name">Name</label>
@@ -55,7 +55,7 @@
             </div>
             <div class="field">
               <label for="email">Email</label>
-              <input id="email" name="Email" type="email" autocomplete="email" required>
+              <input id="email" name="email" type="email" autocomplete="email" required>
             </div>
             <div class="field">
               <label for="company">Company <span class="hint">if this is a firm account</span></label>
@@ -95,9 +95,17 @@
               <textarea id="notes" name="Notes" rows="3"></textarea>
             </div>
           </div>
+          <input type="hidden" name="_subject" value="American Courier Express booking">
+          <input type="hidden" name="Kind" value="Booking">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_autoresponse" value="">
+          <input type="hidden" name="_replyto" value="">
+          <input type="hidden" name="_cc" value="">
+          <input type="hidden" name="_next" value="">
+          <input type="hidden" name="Run" value="">
           <p class="form-actions">
             <button class="button" type="submit">Book this with the desk</button>
-            <span class="form-note">You get a run number on this page. An account is optional. Use the same email later if you want the run listed there.</span>
+            <span class="form-note">This booking is emailed to americancourierexpress@my.com, and a copy is sent to the email you enter. An account is optional. Use the same email later if you want the run listed there.</span>
           </p>
         </form>
         <div id="quote-result" class="ticket" hidden></div>
@@ -107,11 +115,11 @@
           <dl>
             <div>
               <dt>Phone</dt>
-              <dd><a href="tel:8135550199">813-555-0199</a></dd>
+              <dd><a href="tel:+16126499537">+1 612-649-9537</a></dd>
             </div>
             <div>
               <dt>Email</dt>
-              <dd><a href="mailto:desk@americancourier.com">desk@americancourier.com</a></dd>
+              <dd><a href="mailto:americancourierexpress@my.com">americancourierexpress@my.com</a></dd>
             </div>
           </dl>
           <p class="desk-note">Have both addresses, the window, and the weight. Price is quoted from those, plus the distance and the area.</p>
@@ -138,8 +146,8 @@
       <div>
         <p class="foot-title">Contact</p>
         <ul>
-          <li><a href="tel:8135550199">813-555-0199</a></li>
-          <li><a href="mailto:desk@americancourier.com">desk@americancourier.com</a></li>
+          <li><a href="tel:+16126499537">+1 612-649-9537</a></li>
+          <li><a href="mailto:americancourierexpress@my.com">americancourierexpress@my.com</a></li>
         </ul>
       </div>
       <nav aria-label="Footer">
@@ -160,8 +168,8 @@
   </footer>
 
   <div class="callbar">
-    <a href="tel:8135550199">813-555-0199</a>
-    <a href="mailto:desk@americancourier.com">desk@americancourier.com</a>
+    <a href="tel:+16126499537">+1 612-649-9537</a>
+    <a href="mailto:americancourierexpress@my.com">americancourierexpress@my.com</a>
   </div>
   <script src="js/desk.js"></script>
 </body>

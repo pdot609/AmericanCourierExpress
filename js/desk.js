@@ -133,21 +133,41 @@
     });
   }
 
+  function setField(form, name, value) {
+    var field = form.elements[name];
+    if (!field) return;
+    field.value = value;
+  }
+
   function bindQuote() {
     var form = document.getElementById("quote-form");
     var box = document.getElementById("quote-result");
     if (!form || !box) return;
+    var sending = false;
 
     function fillEmail() {
-      if (currentEmail()) form.elements.Email.value = currentEmail();
+      if (currentEmail() && form.elements.email && !form.elements.email.value) {
+        form.elements.email.value = currentEmail();
+      }
     }
     fillEmail();
 
     form.addEventListener("submit", function (event) {
-      event.preventDefault();
+      if (sending) {
+        event.preventDefault();
+        return;
+      }
+      var email = (form.elements.email.value || currentEmail() || "").trim().toLowerCase();
+      if (!email) {
+        event.preventDefault();
+        return;
+      }
+      sending = true;
       var data = load();
-      var email = (form.elements.Email.value || currentEmail() || "").trim().toLowerCase();
-      if (!email) return;
+      var name = form.elements.Name.value.trim();
+      var phone = form.elements.Phone.value.trim();
+      var company = form.elements.Company.value.trim();
+      var notes = form.elements.Notes.value.trim();
       var run = {
         id: nextId(data),
         window: form.elements.Window.value,
@@ -160,12 +180,33 @@
       };
       data.runs.push(run);
       save(data);
+      form.elements.email.value = email;
+      var copy = [
+        "Your American Courier Express booking is " + run.id + ".",
+        "",
+        "Name: " + name,
+        "Phone: " + phone,
+        "Email: " + email,
+        company ? "Company: " + company : "",
+        "Window: " + run.window,
+        "Ready: " + run.ready,
+        "Pickup: " + run.from,
+        "Delivery: " + run.to,
+        "Load: " + run.load,
+        notes ? "Notes: " + notes : "",
+        "",
+        "Track this run with " + run.id + ".",
+        "Desk phone: +1 612-649-9537"
+      ].filter(Boolean).join("\n");
+      setField(form, "_subject", "Booking " + run.id + " — " + name);
+      setField(form, "_autoresponse", copy);
+      setField(form, "_replyto", email);
+      setField(form, "_cc", email);
+      setField(form, "Run", run.id);
+      setField(form, "_next", new URL("track.html?run=" + encodeURIComponent(run.id), window.location.href).href);
       box.hidden = false;
       box.innerHTML =
-        "<p>Booked as <strong>" + esc(run.id) + "</strong>. Status is Booked.</p>" +
-        '<p><a href="track.html?run=' + encodeURIComponent(run.id) + '">Track ' + esc(run.id) + "</a></p>";
-      form.reset();
-      fillEmail();
+        "<p>Booked as <strong>" + esc(run.id) + "</strong>. This booking is being emailed to americancourierexpress@my.com and to " + esc(email) + ".</p>";
     });
   }
 

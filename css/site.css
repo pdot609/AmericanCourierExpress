@@ -900,14 +900,16 @@ main .wrap {
   }
 
   .callbar a {
-    flex: 1;
+    flex: 1 1 auto;
+    min-width: 0;
     text-align: center;
     color: var(--white);
     text-decoration: none;
     font-weight: 700;
-    font-size: 0.82rem;
-    letter-spacing: 0.02em;
-    padding: 0.95rem 0.35rem;
+    font-size: 0.78rem;
+    letter-spacing: 0;
+    white-space: nowrap;
+    padding: 0.95rem 0.4rem;
   }
 
   .callbar a + a {
@@ -916,6 +918,20 @@ main .wrap {
 
   .callbar a:hover {
     color: var(--white);
+  }
+}
+
+@media (max-width: 680px) {
+  body.has-callbar {
+    padding-bottom: 6.5rem;
+  }
+
+  .callbar {
+    flex-direction: column;
+  }
+
+  .callbar a {
+    font-size: 0.84rem;
   }
 }
 
