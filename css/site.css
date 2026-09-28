@@ -8,7 +8,7 @@
   --paper: #f5f6f8;
   --white: #fff;
   --gutter: 1.25rem;
-  --sans: Montserrat, "Segoe UI", sans-serif;
+  --sans: Montserrat, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   color-scheme: light;
 }
 
@@ -1306,7 +1306,36 @@ main .wrap {
   margin-top: 0.9rem;
 }
 
-  @media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: no-preference) {
+  body.is-ready main {
+    animation: page-in 0.32s ease both;
+  }
+
+  body.is-leaving main {
+    animation: page-out 0.2s ease forwards;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
   .board.is-moving .route-fill,
   .board.is-moving .route-pkg {
     transition: none;
@@ -1327,6 +1356,11 @@ main .wrap {
   .login,
   .mast-top {
     display: none !important;
+  }
+
+  body.is-ready main,
+  body.is-leaving main {
+    animation: none;
   }
 
   .hero,

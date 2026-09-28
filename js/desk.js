@@ -32,6 +32,89 @@
     return sessionStorage.getItem(SESSION) || "";
   }
 
+  function motionOk() {
+    return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  function depart(url, replace) {
+    if (!url) return;
+    function go() {
+      if (replace) window.location.replace(url);
+      else window.location.href = url;
+    }
+    if (!motionOk() || document.body.classList.contains("is-leaving")) {
+      go();
+      return;
+    }
+    document.body.classList.add("is-leaving");
+    var left = false;
+    function leave(event) {
+      if (event && event.animationName && event.animationName !== "page-out") return;
+      if (left) return;
+      left = true;
+      go();
+    }
+    var main = document.querySelector("main");
+    if (main) main.addEventListener("animationend", leave);
+    setTimeout(leave, 360);
+  }
+
+  function linkFrom(node) {
+    while (node && node !== document) {
+      if (node.tagName === "A") return node;
+      node = node.parentNode;
+    }
+    return null;
+  }
+
+  function sameSite(link) {
+    if (!link || link.target === "_blank" || link.hasAttribute("download")) return false;
+    var href = link.getAttribute("href") || "";
+    if (!href || href.charAt(0) === "#" || href.indexOf("mailto:") === 0 || href.indexOf("tel:") === 0) return false;
+    var url;
+    try {
+      url = new URL(link.href, window.location.href);
+    } catch (err) {
+      return false;
+    }
+    return url.origin === window.location.origin;
+  }
+
+  function bindMotion() {
+    function arrive() {
+      document.body.classList.remove("is-leaving");
+      document.body.classList.remove("is-ready");
+      if (!motionOk()) return;
+      void document.body.offsetWidth;
+      document.body.classList.add("is-ready");
+      setTimeout(function () {
+        document.body.classList.remove("is-ready");
+      }, 500);
+    }
+
+    window.addEventListener("pageshow", function (event) {
+      if (event.persisted) arrive();
+      else document.body.classList.remove("is-leaving");
+    });
+
+    document.addEventListener("click", function (event) {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      var link = linkFrom(event.target);
+      if (!sameSite(link)) return;
+      var url;
+      try {
+        url = new URL(link.href, window.location.href);
+      } catch (err) {
+        return;
+      }
+      if (url.pathname === window.location.pathname && url.search === window.location.search && url.hash) return;
+      event.preventDefault();
+      depart(link.href, false);
+    });
+
+    if (!document.body.classList.contains("is-leaving")) arrive();
+  }
+
   function paintHeader() {
     var link = document.querySelector(".mast-call .login");
     if (!link) return;
@@ -154,7 +237,7 @@
       if (codeOk(raw)) {
         sessionStorage.setItem(PASS, "open");
         sessionStorage.setItem(TRACKED, normalizeId(raw));
-        window.location.href = "dashboard.html";
+        depart("dashboard.html");
         return;
       }
       var key = normalizeId(raw);
@@ -309,7 +392,7 @@
     var form = document.getElementById("login-form");
     if (!form) return;
     if (currentEmail()) {
-      window.location.href = "account.html";
+      depart("account.html");
       return;
     }
     form.addEventListener("submit", function (event) {
@@ -326,7 +409,7 @@
         return;
       }
       sessionStorage.setItem(SESSION, email);
-      window.location.href = "account.html";
+      depart("account.html");
     });
   }
 
@@ -362,7 +445,7 @@
       });
       save(data);
       sessionStorage.setItem(SESSION, email);
-      window.location.href = "account.html";
+      depart("account.html");
     });
   }
 
@@ -371,7 +454,7 @@
     if (!root) return;
     var email = currentEmail();
     if (!email) {
-      window.location.href = "login.html";
+      depart("login.html");
       return;
     }
     var data = load();
@@ -381,7 +464,7 @@
     }
     if (!user) {
       sessionStorage.removeItem(SESSION);
-      window.location.href = "login.html";
+      depart("login.html");
       return;
     }
     var mine = data.runs.filter(function (run) { return run.owner === email; });
@@ -399,7 +482,7 @@
       '<button class="button" id="sign-out" type="button">Sign out</button>';
     document.getElementById("sign-out").addEventListener("click", function () {
       sessionStorage.removeItem(SESSION);
-      window.location.href = "login.html";
+      depart("login.html");
     });
   }
 
@@ -414,7 +497,7 @@
     if (!board || !intro || !status || !note || !replay || !fill || !pkg) return;
     var tracked = sessionStorage.getItem(TRACKED) || "";
     if (sessionStorage.getItem(PASS) !== "open" || !codeOk(tracked)) {
-      window.location.replace("track.html");
+      depart("track.html", true);
       return;
     }
 
@@ -594,6 +677,7 @@
   }
 
   paintHeader();
+  bindMotion();
   bindTrack();
   bindQuote();
   bindLogin();
