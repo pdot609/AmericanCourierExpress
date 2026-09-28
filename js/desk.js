@@ -1,6 +1,9 @@
 (function () {
   var STORAGE = "ace-desk-v3";
   var SESSION = "ace-desk-session";
+  var PASS = "ace-desk-pass";
+  var TRACKED = "ace-desk-run";
+  var CODES = ["ACE1908", "ACE2214", "ACE3340", "ACE4512", "ACE5607"];
   var STEPS = ["Booked", "Picked up", "On the road", "Delivered"];
 
   var seed = {
@@ -39,6 +42,18 @@
       link.textContent = "Login";
       link.setAttribute("href", "login.html");
     }
+  }
+
+  function codeKey(value) {
+    return String(value || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+  }
+
+  function codeOk(value) {
+    var key = codeKey(value);
+    for (var i = 0; i < CODES.length; i += 1) {
+      if (CODES[i] === key) return true;
+    }
+    return false;
   }
 
   function normalizeId(id) {
@@ -81,17 +96,28 @@
     }).join("");
   }
 
+  function factRows(run) {
+    if (run.details && run.details.length) return run.details;
+    return [
+      ["Window", run.window],
+      ["Ready", run.ready],
+      ["From", run.from],
+      ["To", run.to],
+      ["Load", run.load]
+    ];
+  }
+
+  function factsMarkup(rows) {
+    return rows.map(function (row) {
+      return "<div><dt>" + esc(row[0]) + "</dt><dd>" + esc(row[1]) + "</dd></div>";
+    }).join("");
+  }
+
   function runMarkup(run) {
     return (
       '<p class="run-id">' + esc(run.id) + "</p>" +
       '<ol class="status">' + statusList(run.status) + "</ol>" +
-      "<dl>" +
-      "<div><dt>Window</dt><dd>" + esc(run.window) + "</dd></div>" +
-      "<div><dt>Ready</dt><dd>" + esc(run.ready) + "</dd></div>" +
-      "<div><dt>From</dt><dd>" + esc(run.from) + "</dd></div>" +
-      "<div><dt>To</dt><dd>" + esc(run.to) + "</dd></div>" +
-      "<div><dt>Load</dt><dd>" + esc(run.load) + "</dd></div>" +
-      "</dl>"
+      "<dl>" + factsMarkup(factRows(run)) + "</dl>"
     );
   }
 
@@ -124,19 +150,20 @@
 
     form.addEventListener("submit", function (event) {
       event.preventDefault();
-      var key = normalizeId(form.elements.run.value);
+      var raw = form.elements.run.value;
+      if (codeOk(raw)) {
+        sessionStorage.setItem(PASS, "open");
+        sessionStorage.setItem(TRACKED, normalizeId(raw));
+        window.location.href = "dashboard.html";
+        return;
+      }
+      var key = normalizeId(raw);
       var url = "track.html?run=" + encodeURIComponent(key);
       if (window.location.pathname.endsWith("track.html") || window.location.pathname.endsWith("/")) {
         history.replaceState(null, "", url);
       }
       lookup(key);
     });
-  }
-
-  function setField(form, name, value) {
-    var field = form.elements[name];
-    if (!field) return;
-    field.value = value;
   }
 
   function bindQuote() {
@@ -152,17 +179,27 @@
     }
     fillEmail();
 
+    function showBox(html, sent) {
+      box.hidden = false;
+      box.className = sent ? "ticket sent" : "ticket";
+      box.innerHTML = html;
+      box.scrollIntoView({ block: "center" });
+    }
+
     form.addEventListener("submit", function (event) {
-      if (sending) {
-        event.preventDefault();
-        return;
-      }
+      event.preventDefault();
+      if (sending) return;
       var email = (form.elements.email.value || currentEmail() || "").trim().toLowerCase();
-      if (!email) {
-        event.preventDefault();
-        return;
-      }
+      if (!email) return;
       sending = true;
+      var button = form.querySelector("button[type='submit']");
+      var label = button ? button.textContent : "";
+      if (button) {
+        button.disabled = true;
+        button.textContent = "Sending";
+      }
+      showBox("<p>Sending this booking.</p>", false);
+
       var data = load();
       var name = form.elements.Name.value.trim();
       var phone = form.elements.Phone.value.trim();
@@ -178,9 +215,6 @@
         load: form.elements.Load.value,
         owner: email
       };
-      data.runs.push(run);
-      save(data);
-      form.elements.email.value = email;
       var copy = [
         "Your American Courier Express booking is " + run.id + ".",
         "",
@@ -198,15 +232,69 @@
         "Track this run with " + run.id + ".",
         "Desk phone: +1 612-649-9537"
       ].filter(Boolean).join("\n");
-      setField(form, "_subject", "Booking " + run.id + " — " + name);
-      setField(form, "_autoresponse", copy);
-      setField(form, "_replyto", email);
-      setField(form, "_cc", email);
-      setField(form, "Run", run.id);
-      setField(form, "_next", new URL("track.html?run=" + encodeURIComponent(run.id), window.location.href).href);
-      box.hidden = false;
-      box.innerHTML =
-        "<p>Booked as <strong>" + esc(run.id) + "</strong>. This booking is being emailed to americancourierexpress@my.com and to " + esc(email) + ".</p>";
+
+      function release() {
+        sending = false;
+        if (button) {
+          button.disabled = false;
+          button.textContent = label;
+        }
+      }
+
+      fetch("https://formsubmit.co/ajax/americancourierexpress@my.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify({
+          _subject: "Booking " + run.id + " — " + name,
+          _template: "table",
+          _captcha: "false",
+          _replyto: email,
+          _cc: email,
+          Kind: "Booking",
+          Run: run.id,
+          Name: name,
+          Phone: phone,
+          email: email,
+          Company: company,
+          Pickup: run.from,
+          Delivery: run.to,
+          Window: run.window,
+          "Ready at": run.ready,
+          Load: run.load,
+          Notes: notes,
+          message: copy
+        })
+      }).then(function (response) {
+        return response.json().then(function (body) {
+          return { ok: response.ok, body: body };
+        });
+      }).then(function (result) {
+        var accepted = result.ok && result.body && (result.body.success === true || result.body.success === "true");
+        if (!accepted) {
+          var reason = result.body && result.body.message ? result.body.message : "The desk did not accept the email.";
+          showBox("<p class=\"form-error\">Not sent.</p><p>" + esc(reason) + "</p>", false);
+          release();
+          return;
+        }
+        data.runs.push(run);
+        save(data);
+        showBox(
+          "<p class=\"sent-kicker\">Sent</p>" +
+          "<p class=\"run-id\">" + esc(run.id) + "</p>" +
+          "<p>This booking was emailed to americancourierexpress@my.com and to " + esc(email) + ".</p>" +
+          "<p><a href=\"track.html?run=" + encodeURIComponent(run.id) + "\">Track " + esc(run.id) + "</a></p>",
+          true
+        );
+        form.reset();
+        fillEmail();
+        release();
+      }).catch(function () {
+        showBox("<p class=\"form-error\">Not sent.</p><p>The booking email did not go out. Try again.</p>", false);
+        release();
+      });
     });
   }
 
@@ -315,10 +403,201 @@
     });
   }
 
+  function bindLive() {
+    var board = document.getElementById("live-board");
+    var intro = document.getElementById("desk-intro");
+    var status = document.getElementById("live-status");
+    var note = document.getElementById("live-line");
+    var replay = document.getElementById("replay");
+    var fill = document.getElementById("route-fill");
+    var pkg = document.getElementById("route-pkg");
+    if (!board || !intro || !status || !note || !replay || !fill || !pkg) return;
+    var tracked = sessionStorage.getItem(TRACKED) || "";
+    if (sessionStorage.getItem(PASS) !== "open" || !codeOk(tracked)) {
+      window.location.replace("track.html");
+      return;
+    }
+
+    var timers = [];
+    var started = false;
+    var profile = shipmentFor(tracked);
+    var run = {
+      id: normalizeId(tracked),
+      window: profile.window,
+      ready: profile.ready,
+      from: profile.from,
+      to: profile.to,
+      load: profile.load,
+      details: profile.details || null,
+      owner: "desk"
+    };
+
+    function shipmentFor(id) {
+      if (codeKey(id) === "ACE5607") {
+        return {
+          title: "The parcel is on the way.",
+          dek: "Expedited international shipment from Illinois to Toronto. It is still in transit and has not arrived.",
+          marker: "Parcel",
+          fromLabel: "From",
+          toLabel: "To",
+          fromPlace: "Jonathan McCaw, 6 Johnson Street, Illinois, USA",
+          toPlace: "Elizabeth Ion, 145 King Street West, Toronto, Ontario, Canada, M5H 1J8",
+          window: "5–7 business days",
+          ready: "Expedited International Shipping",
+          from: "Jonathan McCaw, 6 Johnson Street, Illinois, USA",
+          to: "Elizabeth Ion, 145 King Street West, Toronto, Ontario, Canada, M5H 1J8",
+          load: "1 medium-sized parcel containing clothing, personal documents, and small household items",
+          detail: true,
+          details: [
+            ["Package", "1 medium-sized parcel containing clothing, personal documents, and small household items"],
+            ["From", "Jonathan McCaw, 6 Johnson Street, Illinois, USA"],
+            ["To", "Elizabeth Ion, 145 King Street West, Toronto, Ontario, Canada, M5H 1J8"],
+            ["Duration", "5–7 business days"],
+            ["Service", "Expedited International Shipping"],
+            ["Purpose", "Personal shipment/gift"],
+            ["Weight", "4.5 kg"],
+            ["Dimensions", "45 × 30 × 20 cm"],
+            ["Payment", "Shipping and delivery charges paid by recipient"]
+          ],
+          notes: {
+            booked: "Booked. The parcel is still with Jonathan McCaw in Illinois.",
+            picked: "Picked up at 6 Johnson Street, Illinois. Leaving for Toronto.",
+            road: "On the road. The parcel is on the way to Elizabeth Ion in Toronto and has not arrived."
+          }
+        };
+      }
+      return {
+        title: "The envelope is on the way.",
+        dek: "Rush run from the South Tampa desk to downtown. It stays short of the drop and has not arrived.",
+        marker: "Envelope",
+        fromLabel: "Pickup",
+        toLabel: "Drop",
+        fromPlace: "3902 Henderson Blvd, Tampa",
+        toPlace: "601 N Ashley Dr, Tampa",
+        window: "Rush — about 90 minutes",
+        ready: "Now",
+        from: "3902 Henderson Blvd, Tampa",
+        to: "601 N Ashley Dr, Tampa",
+        load: "One sealed envelope",
+        detail: false,
+        notes: {
+          booked: "Booked. The envelope is still at the pickup.",
+          picked: "Picked up at 3902 Henderson Blvd. Leaving for downtown.",
+          road: "On the road. The envelope is on the way to 601 N Ashley Dr and has not arrived."
+        }
+      };
+    }
+
+    function openDesk() {
+      var idNode = document.getElementById("live-run");
+      var lookup = document.getElementById("live-lookup");
+      var title = document.getElementById("desk-title");
+      var dek = document.getElementById("desk-dek");
+      var facts = document.getElementById("live-facts");
+      var fromLabel = document.getElementById("route-from-label");
+      var toLabel = document.getElementById("route-to-label");
+      var fromPlace = document.getElementById("route-from");
+      var toPlace = document.getElementById("route-to");
+      if (title) title.textContent = profile.title;
+      if (dek) dek.textContent = profile.dek;
+      if (idNode) idNode.textContent = run.id;
+      pkg.textContent = profile.marker;
+      if (fromLabel) fromLabel.textContent = profile.fromLabel;
+      if (toLabel) toLabel.textContent = profile.toLabel;
+      if (fromPlace) fromPlace.textContent = profile.fromPlace;
+      if (toPlace) toPlace.textContent = profile.toPlace;
+      if (facts) facts.innerHTML = factsMarkup(factRows(run));
+      board.classList.toggle("is-detail", profile.detail);
+      if (lookup) {
+        lookup.textContent = "Look up " + run.id;
+        lookup.setAttribute("href", "track.html?run=" + encodeURIComponent(run.id));
+      }
+      intro.hidden = false;
+      board.hidden = false;
+      if (!started) {
+        started = true;
+        play();
+      }
+    }
+
+    function remember(name) {
+      var data = load();
+      var found = null;
+      for (var i = 0; i < data.runs.length; i += 1) {
+        if (data.runs[i].id === run.id) found = data.runs[i];
+      }
+      if (!found) {
+        found = {
+          id: run.id,
+          owner: run.owner
+        };
+        data.runs.push(found);
+      }
+      found.window = run.window;
+      found.ready = run.ready;
+      found.from = run.from;
+      found.to = run.to;
+      found.load = run.load;
+      found.details = run.details;
+      found.status = name;
+      save(data);
+    }
+
+    function place(pct) {
+      pkg.style.left = pct + "%";
+      fill.style.width = pct + "%";
+    }
+
+    function clearTimers() {
+      timers.forEach(function (timer) { clearTimeout(timer); });
+      timers = [];
+    }
+
+    function onRoad() {
+      board.classList.add("is-moving");
+      status.innerHTML = statusList("On the road");
+      note.textContent = profile.notes.road;
+      place(68);
+      remember("On the road");
+    }
+
+    function play() {
+      clearTimers();
+      board.classList.remove("is-moving");
+      place(0);
+      status.innerHTML = statusList("Booked");
+      note.textContent = profile.notes.booked;
+      remember("Booked");
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        onRoad();
+        return;
+      }
+      void board.offsetWidth;
+      timers.push(setTimeout(function () {
+        status.innerHTML = statusList("Picked up");
+        note.textContent = profile.notes.picked;
+        place(8);
+        remember("Picked up");
+        void board.offsetWidth;
+        board.classList.add("is-moving");
+      }, 700));
+      timers.push(setTimeout(function () {
+        status.innerHTML = statusList("On the road");
+        note.textContent = profile.notes.road;
+        place(68);
+        remember("On the road");
+      }, 1600));
+    }
+
+    replay.addEventListener("click", play);
+    openDesk();
+  }
+
   paintHeader();
   bindTrack();
   bindQuote();
   bindLogin();
   bindRegister();
   bindAccount();
+  bindLive();
 })();

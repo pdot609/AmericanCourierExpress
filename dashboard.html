@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard — American Courier Express</title>
+  <meta name="description" content="Open the American Courier Express live-run dashboard with a desk code.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body class="has-callbar">
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="mast">
+    <div class="wrap mast-top">
+      <p>ACE · Tampa Bay</p>
+      <p>Weekdays 9–5 · Weekends by arrangement</p>
+    </div>
+    <div class="wrap mast-main">
+      <a class="wordmark" href="index.html">American<br>Courier Express</a>
+      <nav class="nav" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="about.html">About</a>
+        <a href="faq.html">FAQ</a>
+        <a href="notes.html">Notes</a>
+        <a href="track.html">Track</a>
+        <a href="quote.html">Quote</a>
+      </nav>
+      <div class="mast-call">
+        <a class="login" href="login.html">Login</a>
+        <a class="mast-phone" href="tel:+16126499537">+1 612-649-9537</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="content">
+    <div class="wrap">
+      <header class="page-intro" id="desk-intro" hidden>
+        <h1 id="desk-title">The envelope is on the way.</h1>
+        <p class="dek" id="desk-dek">Rush run from the South Tampa desk to downtown. It stays short of the drop and has not arrived.</p>
+      </header>
+
+      <section class="board" id="live-board" aria-labelledby="desk-title" hidden>
+        <p class="run-id" id="live-run"></p>
+        <p id="live-line" aria-live="polite">Booked. The envelope is still at the pickup.</p>
+        <div class="route">
+          <div class="route-line">
+            <span class="route-fill" id="route-fill"></span>
+            <span class="route-pkg" id="route-pkg">Envelope</span>
+          </div>
+          <div class="route-ends">
+            <p><span id="route-from-label">Pickup</span> <span class="route-place" id="route-from">3902 Henderson Blvd, Tampa</span></p>
+            <p><span id="route-to-label">Drop</span> <span class="route-place" id="route-to">601 N Ashley Dr, Tampa</span></p>
+          </div>
+        </div>
+        <ol class="status" id="live-status"></ol>
+        <dl id="live-facts">
+          <div><dt>Window</dt><dd>Rush — about 90 minutes</dd></div>
+          <div><dt>Ready</dt><dd>Now</dd></div>
+          <div><dt>Load</dt><dd>One sealed envelope</dd></div>
+        </dl>
+        <p class="board-contact"><span>Contact</span> <a href="mailto:americancourierexpress@my.com">americancourierexpress@my.com</a></p>
+        <p class="board-actions">
+          <button class="button" id="replay" type="button">Run this again</button>
+          <a id="live-lookup" href="track.html">Look up this run</a>
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap foot-grid">
+      <div>
+        <a class="foot-brand" href="index.html">American<br>Courier Express</a>
+        <p>LLC · Tampa Bay and Lakeland</p>
+      </div>
+      <div>
+        <p class="foot-title">Desks</p>
+        <ul>
+          <li>3902 Henderson Blvd #208, Tampa, FL 33629</li>
+          <li>9340 N 56th St #222A, Tampa, FL 33617</li>
+          <li>601 N Ashley Dr #1100, Tampa, FL 33602</li>
+          <li>4525 Fairway Oaks Dr, Mulberry, FL 33860</li>
+        </ul>
+      </div>
+      <div>
+        <p class="foot-title">Contact</p>
+        <ul>
+          <li><a href="tel:+16126499537">+1 612-649-9537</a></li>
+          <li><a href="mailto:americancourierexpress@my.com">americancourierexpress@my.com</a></li>
+        </ul>
+      </div>
+      <nav aria-label="Footer">
+        <p class="foot-title">Pages</p>
+        <ul>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="notes.html">Notes</a></li>
+          <li><a href="track.html">Track</a></li>
+          <li><a href="quote.html">Quote</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="wrap foot-base">
+      <p>© 2026 American Courier Express LLC</p>
+    </div>
+  </footer>
+
+  <div class="callbar">
+    <a href="tel:+16126499537">+1 612-649-9537</a>
+    <a href="mailto:americancourierexpress@my.com">americancourierexpress@my.com</a>
+  </div>
+  <script src="js/desk.js"></script>
+</body>
+</html>
