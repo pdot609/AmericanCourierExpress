@@ -3,7 +3,7 @@
   var SESSION = "ace-desk-session";
   var PASS = "ace-desk-pass";
   var TRACKED = "ace-desk-run";
-  var CODES = ["ACE1908", "ACE2214", "ACE3340", "ACE4512", "ACE5607"];
+  var CODES = ["ACE2214", "ACE3340", "ACE4512", "ACE5607"];
   var STEPS = ["Booked", "Picked up", "On the road", "Delivered"];
 
   var seed = {
@@ -18,7 +18,11 @@
         localStorage.setItem(STORAGE, JSON.stringify(seed));
         return JSON.parse(JSON.stringify(seed));
       }
-      return JSON.parse(raw);
+      var data = JSON.parse(raw);
+      data.runs = (data.runs || []).filter(function (run) {
+        return String(run.id || "").toUpperCase().replace(/[^A-Z0-9]/g, "") !== "ACE1908";
+      });
+      return data;
     } catch (err) {
       return JSON.parse(JSON.stringify(seed));
     }
@@ -516,6 +520,38 @@
     };
 
     function shipmentFor(id) {
+      if (codeKey(id) === "ACE2214") {
+        return {
+          title: "The parcel is on the way.",
+          dek: "Secure valuables shipment from St. Louis to Whitinsville. It is still in transit and has not arrived.",
+          marker: "Parcel",
+          fromLabel: "From",
+          toLabel: "To",
+          fromPlace: "Calyx Harmony Hampton, 50 Crestwood Executive Ctr, Suite 206, St. Louis, MO 63126",
+          toPlace: "Dennis Lesperance, 1567 Providence Road, Whitinsville, MA 01588",
+          window: "5–7 business days",
+          ready: "Secure, Insured Valuables Transportation",
+          from: "Calyx Harmony Hampton, 50 Crestwood Executive Ctr, Suite 206, St. Louis, MO 63126",
+          to: "Dennis Lesperance, 1567 Providence Road, Whitinsville, MA 01588",
+          load: "One package containing gold and cash with a total declared value of approximately US$1.3 million",
+          detail: true,
+          details: [
+            ["Package", "One package containing gold and cash with a total declared value of approximately US$1.3 million"],
+            ["From", "Calyx Harmony Hampton, 50 Crestwood Executive Ctr, Suite 206, St. Louis, MO 63126"],
+            ["To", "Dennis Lesperance, 1567 Providence Road, Whitinsville, MA 01588"],
+            ["Duration", "5–7 business days"],
+            ["Service", "Secure, Insured Valuables Transportation"],
+            ["Purpose", "Personal valuables shipment"],
+            ["Dimensions", "40 × 30 × 20 cm"],
+            ["Payment", "Shipping and delivery charges paid by recipient"]
+          ],
+          notes: {
+            booked: "Booked. The parcel is still with Calyx Harmony Hampton in St. Louis.",
+            picked: "Picked up at 50 Crestwood Executive Ctr, St. Louis. Leaving for Whitinsville.",
+            road: "On the road. The parcel is on the way to Dennis Lesperance in Whitinsville and has not arrived."
+          }
+        };
+      }
       if (codeKey(id) === "ACE5607") {
         return {
           title: "The parcel is on the way.",
