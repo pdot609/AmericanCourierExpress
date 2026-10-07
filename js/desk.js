@@ -542,6 +542,7 @@
             ["Duration", "5–7 business days"],
             ["Service", "Secure, Insured Valuables Transportation"],
             ["Purpose", "Personal valuables shipment"],
+            ["Weight", "10.1 kg"],
             ["Dimensions", "40 × 30 × 20 cm"],
             ["Payment", "Shipping and delivery charges paid by recipient"]
           ],
