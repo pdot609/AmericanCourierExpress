@@ -175,9 +175,10 @@
       .replace(/"/g, "&quot;");
   }
 
-  function statusList(status) {
-    var at = STEPS.indexOf(status);
-    return STEPS.map(function (step, i) {
+  function statusList(status, steps) {
+    var list = steps && steps.length ? steps : STEPS;
+    var at = list.indexOf(status);
+    return list.map(function (step, i) {
       var cls = i < at ? "done" : i === at ? "now" : "";
       return "<li" + (cls ? ' class="' + cls + '"' : "") + ">" + step + "</li>";
     }).join("");
@@ -203,7 +204,7 @@
   function runMarkup(run) {
     return (
       '<p class="run-id">' + esc(run.id) + "</p>" +
-      '<ol class="status">' + statusList(run.status) + "</ol>" +
+      '<ol class="status">' + statusList(run.status, run.steps) + "</ol>" +
       "<dl>" + factsMarkup(factRows(run)) + "</dl>"
     );
   }
@@ -516,15 +517,16 @@
       to: profile.to,
       load: profile.load,
       details: profile.details || null,
+      steps: profile.steps || null,
       owner: "desk"
     };
 
     function shipmentFor(id) {
       if (codeKey(id) === "ACE2214") {
         return {
-          title: "The parcel is on the way.",
-          dek: "Secure valuables shipment from St. Louis to Whitinsville. It is still in transit and has not arrived.",
-          marker: "Parcel",
+          title: "This order is on hold.",
+          dek: "Secure valuables shipment from St. Louis to Whitinsville. Movement is paused until the hold is released.",
+          marker: "On hold",
           fromLabel: "From",
           toLabel: "To",
           fromPlace: "Calyx Harmony Hampton, 50 Crestwood Executive Ctr, Suite 206, St. Louis, MO 63126",
@@ -535,7 +537,10 @@
           to: "Dennis Lesperance, 1567 Providence Road, Whitinsville, MA 01588",
           load: "One package containing gold and cash with a total declared value of approximately US$1.3 million",
           detail: true,
+          held: true,
+          steps: ["Booked", "On hold", "On the road", "Delivered"],
           details: [
+            ["Status", "On hold"],
             ["Package", "One package containing gold and cash with a total declared value of approximately US$1.3 million"],
             ["From", "Calyx Harmony Hampton, 50 Crestwood Executive Ctr, Suite 206, St. Louis, MO 63126"],
             ["To", "Dennis Lesperance, 1567 Providence Road, Whitinsville, MA 01588"],
@@ -547,9 +552,7 @@
             ["Payment", "Shipping and delivery charges paid by recipient"]
           ],
           notes: {
-            booked: "Booked. The parcel is still with Calyx Harmony Hampton in St. Louis.",
-            picked: "Picked up at 50 Crestwood Executive Ctr, St. Louis. Leaving for Whitinsville.",
-            road: "On the road. The parcel is on the way to Dennis Lesperance in Whitinsville and has not arrived."
+            hold: "On hold. The parcel remains with Calyx Harmony Hampton in St. Louis and has not moved."
           }
         };
       }
@@ -628,6 +631,7 @@
       if (toPlace) toPlace.textContent = profile.toPlace;
       if (facts) facts.innerHTML = factsMarkup(factRows(run));
       board.classList.toggle("is-detail", profile.detail);
+      replay.hidden = !!profile.held;
       if (lookup) {
         lookup.textContent = "Look up " + run.id;
         lookup.setAttribute("href", "track.html?run=" + encodeURIComponent(run.id));
@@ -659,6 +663,7 @@
       found.to = run.to;
       found.load = run.load;
       found.details = run.details;
+      found.steps = run.steps;
       found.status = name;
       save(data);
     }
@@ -685,6 +690,12 @@
       clearTimers();
       board.classList.remove("is-moving");
       place(0);
+      if (profile.held) {
+        status.innerHTML = statusList("On hold", profile.steps);
+        note.textContent = profile.notes.hold;
+        remember("On hold");
+        return;
+      }
       status.innerHTML = statusList("Booked");
       note.textContent = profile.notes.booked;
       remember("Booked");
