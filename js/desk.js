@@ -556,6 +556,39 @@
           }
         };
       }
+      if (codeKey(id) === "ACE3340") {
+        return {
+          title: "The parcel is on the way.",
+          dek: "Secured valuables shipment from Los Angeles to Plovdiv. It is still in transit and has not arrived.",
+          marker: "Parcel",
+          fromLabel: "From",
+          toLabel: "To",
+          fromPlace: "Gerald Butler, 6333 W 3rd St, Suite 818, Los Angeles, CA 90036",
+          toPlace: "Fidanka Ninova, St. Boncho 10, c. Ustina 4228, Plovdiv, Bulgaria",
+          window: "5–7 business days",
+          ready: "Secured, Insured Valuables Transportation",
+          from: "Gerald Butler, 6333 W 3rd St, Suite 818, Los Angeles, CA 90036",
+          to: "Fidanka Ninova, St. Boncho 10, c. Ustina 4228, Plovdiv, Bulgaria",
+          load: "One package containing gold and cash with a total declared value of approximately US$1.3 million",
+          detail: true,
+          details: [
+            ["Package", "One package containing gold and cash with a total declared value of approximately US$1.3 million"],
+            ["From", "Gerald Butler, 6333 W 3rd St, Suite 818, Los Angeles, CA 90036"],
+            ["To", "Fidanka Ninova, St. Boncho 10, c. Ustina 4228, Plovdiv, Bulgaria"],
+            ["Duration", "5–7 business days"],
+            ["Service", "Secured, Insured Valuables Transportation"],
+            ["Purpose", "Personal valuables shipment"],
+            ["Weight", "10.1 kg"],
+            ["Dimensions", "40 × 30 × 20 cm"],
+            ["Payment", "Shipping and delivery charges paid by recipient"]
+          ],
+          notes: {
+            booked: "Booked. The parcel is still with Gerald Butler in Los Angeles.",
+            picked: "Picked up at 6333 W 3rd St, Los Angeles. Leaving for Plovdiv.",
+            road: "On the road. The parcel is on the way to Fidanka Ninova in Plovdiv and has not arrived."
+          }
+        };
+      }
       if (codeKey(id) === "ACE5607") {
         return {
           title: "The parcel is on the way.",
