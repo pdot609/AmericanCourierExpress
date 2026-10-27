@@ -225,7 +225,17 @@
     var box = document.getElementById("track-result");
     if (!form || !box) return;
 
+    function openCode(id) {
+      sessionStorage.setItem(PASS, "open");
+      sessionStorage.setItem(TRACKED, normalizeId(id));
+      window.location.href = "dashboard.html";
+    }
+
     function lookup(id) {
+      if (codeOk(id)) {
+        openCode(id);
+        return;
+      }
       var key = normalizeId(id);
       form.elements.run.value = key;
       var data = load();
@@ -558,9 +568,9 @@
       }
       if (codeKey(id) === "ACE3340") {
         return {
-          title: "The parcel is on the way.",
-          dek: "Secured valuables shipment from Los Angeles to Plovdiv. It is still in transit and has not arrived.",
-          marker: "Parcel",
+          title: "This order is on hold.",
+          dek: "Secured valuables shipment from Los Angeles to Plovdiv. Movement is paused until the hold is released.",
+          marker: "On hold",
           fromLabel: "From",
           toLabel: "To",
           fromPlace: "Gerald Butler, 6333 W 3rd St, Suite 818, Los Angeles, CA 90036",
@@ -571,7 +581,10 @@
           to: "Fidanka Ninova, St. Boncho 10, c. Ustina 4228, Plovdiv, Bulgaria",
           load: "One package containing gold and cash with a total declared value of approximately US$1.3 million",
           detail: true,
+          held: true,
+          steps: ["Booked", "On hold", "On the road", "Delivered"],
           details: [
+            ["Status", "On hold"],
             ["Package", "One package containing gold and cash with a total declared value of approximately US$1.3 million"],
             ["From", "Gerald Butler, 6333 W 3rd St, Suite 818, Los Angeles, CA 90036"],
             ["To", "Fidanka Ninova, St. Boncho 10, c. Ustina 4228, Plovdiv, Bulgaria"],
@@ -583,9 +596,7 @@
             ["Payment", "Shipping and delivery charges paid by recipient"]
           ],
           notes: {
-            booked: "Booked. The parcel is still with Gerald Butler in Los Angeles.",
-            picked: "Picked up at 6333 W 3rd St, Los Angeles. Leaving for Plovdiv.",
-            road: "On the road. The parcel is on the way to Fidanka Ninova in Plovdiv and has not arrived."
+            hold: "On hold. The parcel remains with Gerald Butler in Los Angeles and has not moved."
           }
         };
       }
