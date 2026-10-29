@@ -3,7 +3,7 @@
   var SESSION = "ace-desk-session";
   var PASS = "ace-desk-pass";
   var TRACKED = "ace-desk-run";
-  var CODES = ["ACE2214", "ACE3340", "ACE4512", "ACE5607", "ACE6724"];
+  var CODES = ["ACE2214", "ACE3340", "ACE4512", "ACE5607", "ACE6724", "ACE7836"];
   var STEPS = ["Booked", "Picked up", "On the road", "Delivered"];
 
   var seed = {
@@ -636,9 +636,9 @@
       }
       if (codeKey(id) === "ACE6724") {
         return {
-          title: "The parcel is on the way.",
-          dek: "Secured valuables shipment from Monticello to Eugene. It is still in transit and has not arrived.",
-          marker: "Parcel",
+          title: "This order is on hold.",
+          dek: "Secured valuables shipment from Monticello to Eugene. Movement is paused until the hold is released.",
+          marker: "On hold",
           fromLabel: "From",
           toLabel: "To",
           fromPlace: "Douglas Murray, 206 E 7th Street, Monticello, MN 55362, USA",
@@ -649,7 +649,10 @@
           to: "Jeanine Jones, 2350 Cubit St #106, Eugene, OR 97402",
           load: "One package containing gold and cash with a total declared value of approximately US$1.3 million",
           detail: true,
+          held: true,
+          steps: ["Booked", "On hold", "On the road", "Delivered"],
           details: [
+            ["Status", "On hold"],
             ["Package", "One package containing gold and cash with a total declared value of approximately US$1.3 million"],
             ["From", "Douglas Murray, 206 E 7th Street, Monticello, MN 55362, USA"],
             ["To", "Jeanine Jones, 2350 Cubit St #106, Eugene, OR 97402"],
@@ -661,9 +664,40 @@
             ["Payment", "Shipping and delivery charges paid by recipient"]
           ],
           notes: {
-            booked: "Booked. The parcel is still with Douglas Murray in Monticello.",
-            picked: "Picked up at 206 E 7th Street, Monticello. Leaving for Eugene.",
-            road: "On the road. The parcel is on the way to Jeanine Jones in Eugene and has not arrived."
+            hold: "On hold. The parcel remains with Douglas Murray in Monticello and has not moved."
+          }
+        };
+      }
+      if (codeKey(id) === "ACE7836") {
+        return {
+          title: "The parcel is on the way.",
+          dek: "Secured valuables shipment from Olympia to Weeki Wachee. It is still in transit and has not arrived.",
+          marker: "Parcel",
+          fromLabel: "From",
+          toLabel: "To",
+          fromPlace: "Quilly Glover, 900 Jefferson St SE, Olympia, WA 98501",
+          toPlace: "Jacqueline Ruggiero, 7135 Bayberry Dr., Weeki Wachee, FL 34607",
+          window: "4–5 business days",
+          ready: "Secured, Insured Valuables Transportation",
+          from: "Quilly Glover, 900 Jefferson St SE, Olympia, WA 98501",
+          to: "Jacqueline Ruggiero, 7135 Bayberry Dr., Weeki Wachee, FL 34607",
+          load: "One package containing gold and cash with a total declared value of approximately US$1.3 million",
+          detail: true,
+          details: [
+            ["Package", "One package containing gold and cash with a total declared value of approximately US$1.3 million"],
+            ["From", "Quilly Glover, 900 Jefferson St SE, Olympia, WA 98501"],
+            ["To", "Jacqueline Ruggiero, 7135 Bayberry Dr., Weeki Wachee, FL 34607"],
+            ["Duration", "4–5 business days"],
+            ["Service", "Secured, Insured Valuables Transportation"],
+            ["Purpose", "Personal valuables shipment"],
+            ["Weight", "10.1 kg"],
+            ["Dimensions", "40 × 30 × 20 cm"],
+            ["Payment", "Shipping and delivery charges paid by recipient"]
+          ],
+          notes: {
+            booked: "Booked. The parcel is still with Quilly Glover in Olympia.",
+            picked: "Picked up at 900 Jefferson St SE, Olympia. Leaving for Weeki Wachee.",
+            road: "On the road. The parcel is on the way to Jacqueline Ruggiero in Weeki Wachee and has not arrived."
           }
         };
       }
